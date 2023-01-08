@@ -10,18 +10,24 @@ import java.util.List;
 @RestController
 public class UserResource {
     private final UserService service;
-    public UserResource(UserService service){
+
+    public UserResource(UserService service) {
         this.service = service;
     }
+
     @GetMapping("/users")
-    public List<User>  retrieveAllUsers(){
+    public List<User> retrieveAllUsers() {
         return service.findAll();
     }
 
     @GetMapping("/users/{id}")
     public User retrieveUser(@PathVariable int id) {
-        return service.findOne(id);
+        User user = service.findOne(id);
+        if (user == null)
+            throw new UserNotFoundException("id:" + id);
+        return user;
     }
+
     @PostMapping("/users")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
         User savedUser = service.save(user);
