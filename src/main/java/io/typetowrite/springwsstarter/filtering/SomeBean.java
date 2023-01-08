@@ -1,4 +1,4 @@
-package io.typetowrite.springwsstarter.user.filtering;
+package io.typetowrite.springwsstarter.filtering;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
