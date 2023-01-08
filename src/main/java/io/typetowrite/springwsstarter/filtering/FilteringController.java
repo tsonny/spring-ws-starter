@@ -1,4 +1,4 @@
-package io.typetowrite.springwsstarter.user.filtering;
+package io.typetowrite.springwsstarter.filtering;
 
 import java.util.Arrays;
 import java.util.List;
