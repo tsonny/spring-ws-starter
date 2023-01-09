@@ -2,6 +2,7 @@ package io.typetowrite.springwsstarter.user;
 
 import io.typetowrite.springwsstarter.jpa.UserRepository;
 import io.typetowrite.springwsstarter.posts.Post;
+import io.typetowrite.springwsstarter.posts.PostRepository;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -20,11 +21,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserJpaResource {
     private final UserService service;
     private final UserRepository repository;
+    private final PostRepository postRepository;
 
 
-    public UserJpaResource(UserService service, UserRepository repository) {
+    public UserJpaResource(UserService service, UserRepository repository, PostRepository postRepository) {
         this.service = service;
         this.repository = repository;
+        this.postRepository = postRepository;
     }
 
     @GetMapping("/jpa/users")
@@ -68,6 +71,20 @@ public class UserJpaResource {
         if (user.isEmpty())
             throw new UserNotFoundException("id:" + id);
         return user.get().getPosts();
+    }
+
+    @PostMapping("/jpa/users/{id}/posts")
+    public ResponseEntity<Object> createPostForUser(@PathVariable int id, @Valid @RequestBody Post post) {
+        Optional<User> user = repository.findById(id);
+        if (user.isEmpty())
+            throw new UserNotFoundException("id:" + id);
+        post.setUser(user.get());
+        Post savedPost = postRepository.save(post);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedPost.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
 }
 
