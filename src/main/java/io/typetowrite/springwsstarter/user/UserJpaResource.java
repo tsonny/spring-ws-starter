@@ -1,6 +1,7 @@
 package io.typetowrite.springwsstarter.user;
 
 import io.typetowrite.springwsstarter.jpa.UserRepository;
+import io.typetowrite.springwsstarter.posts.Post;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -35,12 +36,12 @@ public class UserJpaResource {
     public EntityModel<User> retrieveUser(@PathVariable int id) {
         Optional<User> user = repository.findById(id);
 
-        if(user.isEmpty())
-            throw new UserNotFoundException("id:"+id);
+        if (user.isEmpty())
+            throw new UserNotFoundException("id:" + id);
 
         EntityModel<User> entityModel = EntityModel.of(user.get());
 
-        WebMvcLinkBuilder link =  linkTo(methodOn(this.getClass()).retrieveAllUsers());
+        WebMvcLinkBuilder link = linkTo(methodOn(this.getClass()).retrieveAllUsers());
         entityModel.add(link.withRel("all-users"));
 
         return entityModel;
@@ -60,4 +61,13 @@ public class UserJpaResource {
     public void deleteUser(@PathVariable int id) {
         repository.deleteById(id);
     }
+
+    @GetMapping("/jpa/users/{id}/posts")
+    public List<Post> retrievePostsForUser(@PathVariable int id) {
+        Optional<User> user = repository.findById(id);
+        if (user.isEmpty())
+            throw new UserNotFoundException("id:" + id);
+        return user.get().getPosts();
+    }
 }
+
