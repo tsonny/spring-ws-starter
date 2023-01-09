@@ -16,7 +16,9 @@ import java.util.List;
 
 @Entity(name = "user_details")
 public class User {
-    protected User(){}
+    protected User() {
+    }
+
     @Id
     @GeneratedValue
     private Integer id;
@@ -35,6 +37,14 @@ public class User {
         this.id = id;
         this.name = name;
         this.birthDate = birthDate;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 
     public Integer getId() {
